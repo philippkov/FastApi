@@ -1,0 +1,72 @@
+@host = http://localhost:8000
+
+### register a new user
+POST {{host}}/register/
+content-type: application/json
+
+{
+  "username": "user1",
+  "password": "password1"
+}
+
+### login to obtain token
+POST {{host}}/token
+content-type: application/x-www-form-urlencoded
+
+username=user1&password=password1
+
+### add a new book using the obtained token
+### replace <token_value> with the actual token received from the login response
+POST {{host}}/books/
+content-type: application/json
+authorization: bearer <token_value>
+
+{
+  "title": "new book title",
+  "author": "author name"
+}
+
+### fetch books to verify the new book has been added
+### replace <token_value> with the actual token received from the login response
+GET {{host}}/mybooks/
+authorization: bearer <token_value>
+
+### register another user for exchange
+POST {{host}}/register/
+content-type: application/json
+
+{
+  "username": "user2",
+  "password": "password2"
+}
+
+### login second user to obtain token
+POST {{host}}/token
+content-type: application/x-www-form-urlencoded
+
+username=user2&password=password2
+
+### second user adds a new book
+### replace <token_value> with the actual token received from the second login response
+POST {{host}}/books/
+content-type: application/json
+authorization: bearer <token_value>
+
+{
+  "title": "second book title",
+  "author": "second author name"
+}
+
+### fetch available books
+GET {{host}}/available/
+
+### request exchange for a book
+### replace <token_value> with the actual token received from the first login response
+POST {{host}}/exchange/
+content-type: application/json
+authorization: bearer <token_value>
+
+{
+  "book_id": 1,             # id книги, которую вы хотите получить
+  "requested_book_id": 2    # id вашей книги, которую вы предлагаете на обмен
+}
