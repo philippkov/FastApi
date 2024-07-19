@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  fast-api-service:
+    container_name: fast-api-container
+    build: .
+    image: fast-api-image
+    volumes:
+      - ./:/app
+    ports:
+      - "8081:8081"
+
+
+  jenkins-service:
+    container_name: jenkins-container
+    build: ./jenkins
+    image: jenkins-image
+    volumes:
+      - ./jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    depends_on:
+      - fast-api-service
+
+volumes:
+  jenkins_home:

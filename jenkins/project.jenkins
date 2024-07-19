@@ -1,0 +1,35 @@
+pipeline{
+    agent any
+
+    stages {
+        stage("Project") {
+            steps {
+                git branch: 'main', url: "https://github.com/philippkov/FastApi.git"
+            }
+
+        }
+
+        stage("Run") {
+            steps {
+                script {
+                sh """
+                docker rm -f fast-api-container
+                docker rmi fast-api-image
+
+                docker compose build fast-api-service
+                docker run -d \
+                      --name fast-api-container \
+                      -p 8081:8081 \
+                      fast-api-image
+                """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
